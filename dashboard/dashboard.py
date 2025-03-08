@@ -42,24 +42,19 @@ ax.set_xticklabels(month_labels)
 
 st.pyplot(fig)
 
-# Hitung rata-rata penyewaan per hari berdasarkan jenis pelanggan
 monthly_comparison = hour_df.groupby("mnth")[["casual", "registered"]].mean().reset_index()
 
-# Ubah bentuk data untuk visualisasi
 monthly_comparison_melted = monthly_comparison.melt(id_vars="mnth", var_name="Customer Type", value_name="Avg Rentals Per Day")
 
-# Mapping nama bulan
 month_labels = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
 
-# Streamlit UI
 st.title("Analisis Penyewaan Sepeda: Pelanggan Kasual vs Terdaftar")
 
 st.subheader("Tabel Rata-rata Penyewaan Sepeda per Hari Berdasarkan Jenis Pelanggan")
-st.dataframe(monthly_comparison_melted)  # Menampilkan tabel interaktif
+st.dataframe(monthly_comparison_melted)
 
 st.subheader("Visualisasi Penyewaan Sepeda per Bulan")
 
-# Plot dengan Matplotlib & Seaborn
 fig, ax = plt.subplots(figsize=(10, 6))
 sns.barplot(x="mnth", y="Avg Rentals Per Day", hue="Customer Type", data=monthly_comparison_melted, palette="Set2", ax=ax)
 
@@ -70,6 +65,4 @@ ax.set_xticks(range(0, 12))
 ax.set_xticklabels(month_labels)
 ax.legend(title="Tipe Pelanggan")
 
-# Tampilkan plot di Streamlit
 st.pyplot(fig)
-

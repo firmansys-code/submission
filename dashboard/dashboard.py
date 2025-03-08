@@ -53,7 +53,7 @@ st.title("Analisis Penyewaan Sepeda: Pelanggan Kasual vs Terdaftar")
 st.subheader("Tabel Rata-rata Penyewaan Sepeda per Hari Berdasarkan Jenis Pelanggan")
 st.dataframe(monthly_comparison_melted)
 
-st.title("Visualisasi Penyewaan Sepeda per Bulan")
+st.subheader("Visualisasi Penyewaan Sepeda per Bulan")
 
 fig, ax = plt.subplots(figsize=(10, 6))
 sns.barplot(x="mnth", y="Avg Rentals Per Day", hue="Customer Type", data=monthly_comparison_melted, palette="Set2", ax=ax)

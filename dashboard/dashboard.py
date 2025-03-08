@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 
-hour_df = pd.read_csv("main_data.csv")
+hour_df = pd.read_csv("/dashboard/main_data.csv")
 
 st.title("Analisis Data Penyewaan Sepeda")
 

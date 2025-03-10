@@ -22,5 +22,5 @@ cd proyek_analisis_data
 Jalankan aplikasi **Streamlit** dengan perintah berikut:
 
 ```bash
-streamlit run dashboard.py
+streamlit run dashboard/dashboard.py
 ```

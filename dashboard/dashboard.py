@@ -59,7 +59,7 @@ st.pyplot(fig)
 
 st.title("🚲 Analisis Penyewaan Sepeda Casual vs Registered")
 
-st.sidebar.header("⚙️ Pilih rentang waktu untuk menampilkan data penyewaan sepeda casual dan registered")
+st.sidebar.header("📝 Pilih rentang waktu untuk menampilkan data penyewaan sepeda casual dan registered")
 min_date, max_date = all_df["dteday"].min(), all_df["dteday"].max()
 start_date, end_date = st.sidebar.date_input("Rentang waktu", [min_date, max_date], min_value=min_date, max_value=max_date)
 

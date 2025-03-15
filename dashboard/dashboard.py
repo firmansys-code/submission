@@ -11,10 +11,11 @@ st.sidebar.header("⚙️ Pilih Rentang Waktu")
 min_date, max_date = all_df["dteday"].min(), all_df["dteday"].max()
 start_date, end_date = st.sidebar.date_input("Rentang waktu", [min_date, max_date], min_value=min_date, max_value=max_date)
 
-filtered_df = all_df[(all_df["dteday"] >= start_date) & (all_df["dteday"] <= end_date)]
+filtered_df = all_df[(all_df["dteday"] >= start_date) & (all_df["dteday"] <= end_date)].copy()
+filtered_df["mnth"] = pd.to_datetime(filtered_df["dteday"]).dt.month
 
 if not filtered_df.empty:
-
+    
     weekday_stats = filtered_df.groupby("weekday").agg({"instant": "nunique", "cnt": ["max", "min"]}).reset_index()
     weekday_stats.columns = ["Weekday", "Unique Records", "Max Rentals", "Min Rentals"]
 
@@ -29,6 +30,13 @@ if not filtered_df.empty:
 
     hourly_stats = filtered_df.groupby("hr").agg({"instant": "nunique", "cnt": ["max", "min"]}).reset_index()
     hourly_stats.columns = ["Hour", "Unique Records", "Max Rentals", "Min Rentals"]
+    
+    daily_avg_rentals = (
+        filtered_df.groupby(["mnth", "dteday"])["cnt"].sum()
+        .groupby("mnth").mean()
+        .reset_index()
+        .rename(columns={"cnt": "avg_rentals_per_day"})
+    )
 
     st.header("📊 Dashboard Statistik Penyewaan Sepeda")
     st.write("📆 **Weekday**")
@@ -58,7 +66,7 @@ if not filtered_df.empty:
 
         st.pyplot(fig)
 
-    plot_bar_chart(weekday_stats, "Weekday", "Penyewaan Berdasarkan Hari ", {"x": "Hari", "y": "Jumlah Penyewaan"})
+    plot_bar_chart(weekday_stats, "Weekday", "Penyewaan Berdasarkan Hari", {"x": "Hari", "y": "Jumlah Penyewaan"})
     plot_bar_chart(workingday_stats, "Workingday", "Penyewaan Berdasarkan Hari Kerja", {"x": "Hari Kerja (0: Libur, 1: Bekerja)", "y": "Jumlah Penyewaan"})
     plot_bar_chart(holiday_stats, "Holiday", "Penyewaan Berdasarkan Hari Libur", {"x": "Hari Libur (0: Tidak Libur, 1: Libur)", "y": "Jumlah Penyewaan"})
     plot_bar_chart(hourly_stats, "Hour", "Penyewaan Berdasarkan Jam", {"x": "Jam (0-23)", "y": "Jumlah Penyewaan"})
@@ -89,5 +97,26 @@ if not filtered_df.empty:
     
     st.pyplot(fig)
     st.dataframe(daily_rentals)
+
+    st.subheader("📊 Rata-rata Penyewaan Sepeda per Hari dalam Setiap Bulan")
+    if not daily_avg_rentals.empty:
+        fig, ax = plt.subplots(figsize=(10, 5))
+        sns.barplot(x="mnth", y="avg_rentals_per_day", data=daily_avg_rentals, palette="Blues", ax=ax)
+
+        ax.set_xlabel("Bulan")
+        ax.set_ylabel("Rata-rata Penyewaan Sepeda per Hari")
+        ax.set_title("Rata-rata Penyewaan Sepeda per Hari dalam Setiap Bulan")
+
+        month_labels = {
+            1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "Mei", 6: "Jun",
+            7: "Jul", 8: "Agu", 9: "Sep", 10: "Okt", 11: "Nov", 12: "Des"
+        }
+        ax.set_xticks(sorted(daily_avg_rentals["mnth"]))
+        ax.set_xticklabels([month_labels[m] for m in sorted(daily_avg_rentals["mnth"])])
+
+        st.pyplot(fig)
+        st.dataframe(daily_avg_rentals)
+    else:
+        st.warning("Tidak ada data untuk periode yang dipilih.")
 
 st.caption('Copyright (c) Proyek Analisis Data')
